@@ -1,0 +1,235 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#101827">
+  <meta name="description" content="Connect with us on all our social platforms through PrintLink.">
+  <title>PrintLink | Digital Connections</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background: #eef2f7;
+      color: #172033;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      padding: 35px 16px;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 430px;
+    }
+
+    .card {
+      background: #ffffff;
+      border-radius: 25px;
+      padding: 30px 23px;
+      box-shadow: 0 15px 45px rgba(20,35,60,.09);
+      text-align: center;
+    }
+
+    .brand {
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 3px;
+      color: #64748b;
+      margin-bottom: 25px;
+    }
+
+    .avatar {
+      width: 88px;
+      height: 88px;
+      margin: auto;
+      border-radius: 50%;
+      background: #101827;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 29px;
+      font-weight: bold;
+      border: 5px solid #e5eaf1;
+    }
+
+    h1 {
+      font-size: 24px;
+      margin-top: 17px;
+      margin-bottom: 8px;
+    }
+
+    .description {
+      color: #718096;
+      font-size: 14px;
+      line-height: 1.6;
+      margin-bottom: 25px;
+    }
+
+    .links {
+      display: grid;
+      gap: 12px;
+    }
+
+    .social {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      text-decoration: none;
+      padding: 16px 18px;
+      border: 1px solid #e7ebf1;
+      border-radius: 13px;
+      color: #202b3e;
+      font-size: 15px;
+      font-weight: 600;
+      transition: .2s;
+    }
+
+    .social:hover {
+      background: #f4f7fb;
+      transform: translateY(-2px);
+    }
+
+    .social span:first-child {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .social-icon {
+      width: 34px;
+      height: 34px;
+      border-radius: 10px;
+      display: grid;
+      place-items: center;
+      background: #f0f3f8;
+      font-size: 17px;
+    }
+
+    .arrow {
+      color: #94a3b8;
+      font-size: 19px;
+    }
+
+    .share {
+      margin-top: 22px;
+      width: 100%;
+      padding: 15px;
+      border: none;
+      border-radius: 12px;
+      background: #101827;
+      color: white;
+      font-size: 14px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .footer {
+      text-align: center;
+      color: #94a3b8;
+      font-size: 11px;
+      margin-top: 23px;
+      letter-spacing: .5px;
+    }
+
+    .footer strong {
+      color: #475569;
+    }
+  </style>
+</head>
+
+<body>
+
+  <main class="container">
+    <section class="card">
+
+      <div class="brand">PRINTLINK</div>
+
+      <div class="avatar">PB</div>
+
+      <h1>Your Business Name</h1>
+
+      <p class="description">
+        Welcome! Connect with us through our social
+        media platforms and let's stay in touch.
+      </p>
+
+      <div class="links">
+
+        <a class="social" href="https://wa.me/2340000000000"
+           target="_blank" rel="noopener">
+          <span>
+            <span class="social-icon">☏</span>
+            WhatsApp
+          </span>
+          <span class="arrow">↗</span>
+        </a>
+
+        <a class="social" href="https://instagram.com/yourusername"
+           target="_blank" rel="noopener">
+          <span>
+            <span class="social-icon">◎</span>
+            Instagram
+          </span>
+          <span class="arrow">↗</span>
+        </a>
+
+        <a class="social" href="https://facebook.com/yourusername"
+           target="_blank" rel="noopener">
+          <span>
+            <span class="social-icon">f</span>
+            Facebook
+          </span>
+          <span class="arrow">↗</span>
+        </a>
+
+        <a class="social" href="https://tiktok.com/@yourusername"
+           target="_blank" rel="noopener">
+          <span>
+            <span class="social-icon">♪</span>
+            TikTok
+          </span>
+          <span class="arrow">↗</span>
+        </a>
+
+      </div>
+
+      <button class="share" onclick="sharePage()">
+        Share this profile
+      </button>
+
+    </section>
+
+    <div class="footer">
+      POWERED BY <strong>THE PRINT GUY</strong>
+    </div>
+  </main>
+
+  <script>
+    function sharePage() {
+      const data = {
+        title: document.title,
+        text: "Connect with us through PrintLink.",
+        url: window.location.href
+      };
+
+      if (navigator.share) {
+        navigator.share(data).catch(() => {});
+      } else {
+        navigator.clipboard.writeText(data.url)
+          .then(() => alert("Profile link copied!"))
+          .catch(() => alert("Copy the page address from your browser."));
+      }
+    }
+  </script>
+
+</body>
+</html>
