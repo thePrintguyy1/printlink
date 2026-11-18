@@ -2,234 +2,379 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#101827">
-  <meta name="description" content="Connect with us on all our social platforms through PrintLink.">
-  <title>PrintLink | Digital Connections</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#101827">
+<meta name="description" content="One scan. Multiple connections. Powered by PrintLink.">
+<title>PrintLink | Connect Better</title>
 
-  <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
+<style>
+:root {
+  --navy: #101827;
+  --blue: #3978f6;
+  --muted: #718096;
+  --line: #e8edf4;
+  --background: #f2f5fa;
+}
 
-    body {
-      font-family: Arial, sans-serif;
-      background: #eef2f7;
-      color: #172033;
-      min-height: 100vh;
-      display: flex;
-      justify-content: center;
-      padding: 35px 16px;
-    }
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
 
-    .container {
-      width: 100%;
-      max-width: 430px;
-    }
+body {
+  font-family: Inter, Arial, sans-serif;
+  background: var(--background);
+  color: var(--navy);
+  min-height: 100vh;
+  padding: 35px 16px;
+}
 
-    .card {
-      background: #ffffff;
-      border-radius: 25px;
-      padding: 30px 23px;
-      box-shadow: 0 15px 45px rgba(20,35,60,.09);
-      text-align: center;
-    }
+.container {
+  width: 100%;
+  max-width: 440px;
+  margin: auto;
+}
 
-    .brand {
-      font-size: 12px;
-      font-weight: 800;
-      letter-spacing: 3px;
-      color: #64748b;
-      margin-bottom: 25px;
-    }
+.card {
+  background: #fff;
+  border: 1px solid rgba(255,255,255,.8);
+  border-radius: 25px;
+  padding: 30px 24px;
+  box-shadow: 0 20px 60px rgba(16,24,39,.08);
+}
 
-    .avatar {
-      width: 88px;
-      height: 88px;
-      margin: auto;
-      border-radius: 50%;
-      background: #101827;
-      color: white;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 29px;
-      font-weight: bold;
-      border: 5px solid #e5eaf1;
-    }
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+}
 
-    h1 {
-      font-size: 24px;
-      margin-top: 17px;
-      margin-bottom: 8px;
-    }
+.logo {
+  font-size: 17px;
+  font-weight: 900;
+  letter-spacing: 2px;
+}
 
-    .description {
-      color: #718096;
-      font-size: 14px;
-      line-height: 1.6;
-      margin-bottom: 25px;
-    }
+.logo span {
+  color: var(--blue);
+}
 
-    .links {
-      display: grid;
-      gap: 12px;
-    }
+.top-label {
+  font-size: 10px;
+  color: var(--muted);
+  letter-spacing: 1px;
+  font-weight: 700;
+}
 
-    .social {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      text-decoration: none;
-      padding: 16px 18px;
-      border: 1px solid #e7ebf1;
-      border-radius: 13px;
-      color: #202b3e;
-      font-size: 15px;
-      font-weight: 600;
-      transition: .2s;
-    }
+.profile {
+  text-align: center;
+  padding: 12px 0 25px;
+}
 
-    .social:hover {
-      background: #f4f7fb;
-      transform: translateY(-2px);
-    }
+.avatar {
+  width: 92px;
+  height: 92px;
+  border-radius: 25px;
+  background: linear-gradient(135deg,#17243a,#3978f6);
+  color: white;
+  display: grid;
+  place-items: center;
+  margin: auto;
+  font-size: 28px;
+  font-weight: 800;
+  overflow: hidden;
+}
 
-    .social span:first-child {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
+.avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
 
-    .social-icon {
-      width: 34px;
-      height: 34px;
-      border-radius: 10px;
-      display: grid;
-      place-items: center;
-      background: #f0f3f8;
-      font-size: 17px;
-    }
+.profile h1 {
+  font-size: 25px;
+  margin-top: 19px;
+  margin-bottom: 8px;
+  letter-spacing: -.5px;
+}
 
-    .arrow {
-      color: #94a3b8;
-      font-size: 19px;
-    }
+.description {
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.7;
+  max-width: 300px;
+  margin: auto;
+}
 
-    .share {
-      margin-top: 22px;
-      width: 100%;
-      padding: 15px;
-      border: none;
-      border-radius: 12px;
-      background: #101827;
-      color: white;
-      font-size: 14px;
-      font-weight: bold;
-      cursor: pointer;
-    }
+.connect-label {
+  text-align: left;
+  font-size: 11px;
+  color: var(--muted);
+  letter-spacing: 1.3px;
+  font-weight: 800;
+  margin-bottom: 13px;
+}
 
-    .footer {
-      text-align: center;
-      color: #94a3b8;
-      font-size: 11px;
-      margin-top: 23px;
-      letter-spacing: .5px;
-    }
+.links {
+  display: grid;
+  gap: 11px;
+}
 
-    .footer strong {
-      color: #475569;
-    }
-  </style>
+.social {
+  min-height: 62px;
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  padding: 10px 14px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  color: var(--navy);
+  text-decoration: none;
+  transition: .2s ease;
+}
+
+.social:not(.disabled):hover {
+  border-color: #c4d6ff;
+  background: #f8faff;
+  transform: translateY(-2px);
+}
+
+.social.disabled {
+  opacity: .55;
+  cursor: default;
+}
+
+.social-icon {
+  width: 39px;
+  height: 39px;
+  display: grid;
+  place-items: center;
+  border-radius: 12px;
+  background: #edf2fa;
+  font-size: 19px;
+  font-weight: 800;
+}
+
+.social-info {
+  flex: 1;
+  text-align: left;
+}
+
+.social-info strong {
+  display: block;
+  font-size: 14px;
+  margin-bottom: 4px;
+}
+
+.social-info small {
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.arrow {
+  color: #94a3b8;
+  font-size: 19px;
+}
+
+.contact {
+  display: block;
+  margin-top: 21px;
+  background: var(--navy);
+  color: white;
+  padding: 16px;
+  text-align: center;
+  border-radius: 13px;
+  font-size: 13px;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.contact:hover {
+  background: #263c60;
+}
+
+.share {
+  width: 100%;
+  background: white;
+  border: 1px solid var(--line);
+  border-radius: 13px;
+  padding: 15px;
+  margin-top: 10px;
+  color: var(--navy);
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.footer {
+  text-align: center;
+  padding: 22px 5px;
+  font-size: 10px;
+  color: #8793a5;
+  letter-spacing: 1.5px;
+}
+
+.footer strong {
+  color: #40516b;
+}
+
+@media(max-width:380px) {
+  .card { padding: 25px 17px; }
+  .profile h1 { font-size: 22px; }
+}
+</style>
 </head>
 
 <body>
+<main class="container">
+  <section class="card">
 
-  <main class="container">
-    <section class="card">
+    <header class="topbar">
+      <div class="logo">PRINT<span>LINK</span></div>
+      <div class="top-label">DIGITAL CONNECTIONS</div>
+    </header>
 
-      <div class="brand">PRINTLINK</div>
-
-      <div class="avatar">PB</div>
-
-      <h1>Your Business Name</h1>
-
-      <p class="description">
-        Welcome! Connect with us through our social
-        media platforms and let's stay in touch.
+    <section class="profile">
+      <div class="avatar" id="avatar">PL</div>
+      <h1 id="businessName">Your Business Name</h1>
+      <p class="description" id="description">
+        Your business description will appear here.
       </p>
-
-      <div class="links">
-
-        <a class="social" href="https://wa.me/2340000000000"
-           target="_blank" rel="noopener">
-          <span>
-            <span class="social-icon">☏</span>
-            WhatsApp
-          </span>
-          <span class="arrow">↗</span>
-        </a>
-
-        <a class="social" href="https://instagram.com/yourusername"
-           target="_blank" rel="noopener">
-          <span>
-            <span class="social-icon">◎</span>
-            Instagram
-          </span>
-          <span class="arrow">↗</span>
-        </a>
-
-        <a class="social" href="https://facebook.com/yourusername"
-           target="_blank" rel="noopener">
-          <span>
-            <span class="social-icon">f</span>
-            Facebook
-          </span>
-          <span class="arrow">↗</span>
-        </a>
-
-        <a class="social" href="https://tiktok.com/@yourusername"
-           target="_blank" rel="noopener">
-          <span>
-            <span class="social-icon">♪</span>
-            TikTok
-          </span>
-          <span class="arrow">↗</span>
-        </a>
-
-      </div>
-
-      <button class="share" onclick="sharePage()">
-        Share this profile
-      </button>
-
     </section>
 
-    <div class="footer">
-      POWERED BY <strong>THE PRINT GUY</strong>
-    </div>
-  </main>
+    <div class="connect-label">CONNECT WITH US</div>
 
-  <script>
-    function sharePage() {
-      const data = {
-        title: document.title,
-        text: "Connect with us through PrintLink.",
-        url: window.location.href
-      };
+    <div class="links" id="socialLinks"></div>
 
-      if (navigator.share) {
-        navigator.share(data).catch(() => {});
-      } else {
-        navigator.clipboard.writeText(data.url)
-          .then(() => alert("Profile link copied!"))
-          .catch(() => alert("Copy the page address from your browser."));
-      }
+    <a class="contact" id="contactButton" href="mailto:hello@example.com">
+      Contact Our Business
+    </a>
+
+    <button class="share" onclick="shareProfile()">
+      ↗ &nbsp; Share This Profile
+    </button>
+
+  </section>
+
+  <footer class="footer">
+    POWERED BY <strong>THE PRINT GUY</strong>
+  </footer>
+</main>
+
+<script>
+/*
+  PRINTLINK BUSINESS SETTINGS
+  Change the information in this section
+  to customise a business profile.
+*/
+
+const business = {
+  name: "Your Business Name",
+  initials: "PB",
+  description: "Welcome! Connect with us through our digital platforms. We would love to hear from you.",
+  logo: "",
+
+  whatsapp: "",
+  instagram: "",
+  facebook: "",
+  tiktok: "",
+
+  email: "hello@example.com"
+};
+
+const platforms = [
+  {
+    id: "whatsapp",
+    name: "WhatsApp",
+    icon: "☏",
+    detail: "Chat with us directly"
+  },
+  {
+    id: "instagram",
+    name: "Instagram",
+    icon: "◎",
+    detail: "Follow our Instagram"
+  },
+  {
+    id: "facebook",
+    name: "Facebook",
+    icon: "f",
+    detail: "Connect on Facebook"
+  },
+  {
+    id: "tiktok",
+    name: "TikTok",
+    icon: "♪",
+    detail: "Watch our latest videos"
+  }
+];
+
+function renderProfile() {
+  document.getElementById("businessName").textContent = business.name;
+  document.getElementById("description").textContent = business.description;
+
+  const avatar = document.getElementById("avatar");
+
+  if (business.logo) {
+    const image = document.createElement("img");
+    image.src = business.logo;
+    image.alt = business.name + " logo";
+    avatar.replaceChildren(image);
+  } else {
+    avatar.textContent = business.initials;
+  }
+
+  document.getElementById("contactButton").href =
+    business.email ? "mailto:" + business.email : "#";
+
+  const links = document.getElementById("socialLinks");
+
+  platforms.forEach(platform => {
+    const url = business[platform.id];
+    const link = document.createElement("a");
+
+    link.className = "social" + (url ? "" : " disabled");
+    link.innerHTML = `
+      <span class="social-icon">${platform.icon}</span>
+      <span class="social-info">
+        <strong>${platform.name}</strong>
+        <small>${url ? platform.detail : "Link not configured yet"}</small>
+      </span>
+      <span class="arrow">${url ? "↗" : "—"}</span>
+    `;
+
+    if (url) {
+      link.href = url;
+      link.target = "_blank";
+      link.rel = "noopener noreferrer";
+    } else {
+      link.addEventListener("click", event => event.preventDefault());
     }
-  </script>
 
+    links.appendChild(link);
+  });
+}
+
+function shareProfile() {
+  const data = {
+    title: business.name + " | PrintLink",
+    text: "Connect with " + business.name,
+    url: window.location.href
+  };
+
+  if (navigator.share) {
+    navigator.share(data).catch(() => {});
+  } else if (navigator.clipboard) {
+    navigator.clipboard.writeText(data.url)
+      .then(() => alert("Profile link copied!"));
+  } else {
+    alert("Copy the profile address from your browser.");
+  }
+}
+
+renderProfile();
+</script>
 </body>
 </html>
