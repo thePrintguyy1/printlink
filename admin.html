@@ -1,0 +1,317 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PrintLink Admin | The Print Guy</title>
+
+  <style>
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      padding: 30px 16px;
+      font-family: Arial, sans-serif;
+      background: #f1f5f9;
+      color: #172554;
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: auto;
+    }
+
+    .panel {
+      background: white;
+      padding: 28px;
+      border-radius: 16px;
+      box-shadow: 0 8px 30px rgba(0,0,0,.05);
+      margin-bottom: 22px;
+    }
+
+    h1 { margin-top: 0; }
+    h2 { font-size: 18px; }
+
+    input {
+      width: 100%;
+      padding: 13px;
+      margin: 9px 0;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      font-size: 15px;
+    }
+
+    button {
+      padding: 13px 20px;
+      background: #173b72;
+      color: white;
+      border: 0;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 15px;
+    }
+
+    button:hover { background: #24549a; }
+
+    .logout {
+      background: #64748b;
+      float: right;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 15px;
+    }
+
+    .stat {
+      padding: 20px;
+      background: #f8fafc;
+      border-radius: 12px;
+    }
+
+    .stat strong {
+      display: block;
+      font-size: 30px;
+      margin-top: 10px;
+    }
+
+    .muted { color: #64748b; }
+    .message { margin-top: 15px; color: #b91c1c; }
+    #dashboard { display: none; }
+
+    .client {
+      padding: 14px 0;
+      border-bottom: 1px solid #e2e8f0;
+    }
+
+    @media(max-width: 550px) {
+      .panel { padding: 20px; }
+      .logout { float: none; margin-bottom: 15px; }
+    }
+  </style>
+</head>
+
+<body>
+<div class="container">
+
+  <section class="panel" id="login">
+    <h1>PrintLink Admin</h1>
+    <p class="muted">The Print Guy — Administrator Login</p>
+
+    <form id="loginForm">
+      <input
+        id="email"
+        type="email"
+        placeholder="Administrator email"
+        required
+      >
+
+      <input
+        id="password"
+        type="password"
+        placeholder="Password"
+        required
+      >
+
+      <button type="submit">Sign In</button>
+    </form>
+
+    <p id="loginMessage" class="message"></p>
+  </section>
+
+  <section id="dashboard">
+
+    <div class="panel">
+      <button class="logout" id="logoutButton">Sign Out</button>
+      <h1>PrintLink Dashboard</h1>
+      <p class="muted">Welcome to The Print Guy's administration panel.</p>
+      <p id="adminMessage" class="muted"></p>
+    </div>
+
+    <div class="panel">
+      <h2>Platform Overview</h2>
+
+      <div class="stats">
+        <div class="stat">
+          Total Clients
+          <strong id="clientCount">0</strong>
+        </div>
+
+        <div class="stat">
+          QR Visits
+          <strong id="scanCount">0</strong>
+        </div>
+
+        <div class="stat">
+          Link Clicks
+          <strong id="clickCount">0</strong>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2>Registered Clients</h2>
+      <div id="clientList" class="muted">Loading clients...</div>
+    </div>
+
+  </section>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script>
+  const SUPABASE_URL =
+    "https://zrdgschtvluhxzvjtypa.supabase.co";
+
+  const SUPABASE_PUBLISHABLE_KEY =
+    "sb_publishable_N7xwZEblpWxhUeDBsaL-Xw_mU8Xt7KN";
+
+  const db = window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_PUBLISHABLE_KEY
+  );
+
+  const login = document.getElementById("login");
+  const dashboard = document.getElementById("dashboard");
+  const loginMessage = document.getElementById("loginMessage");
+
+  async function openDashboard() {
+    const { data: admin, error: adminError } =
+      await db.rpc("is_printlink_admin");
+
+    if (adminError || admin !== true) {
+      await db.auth.signOut();
+      throw new Error(
+        "This account is not authorised to access PrintLink Admin."
+      );
+    }
+
+    login.style.display = "none";
+    dashboard.style.display = "block";
+
+    await loadDashboard();
+  }
+
+  async function loadDashboard() {
+    document.getElementById("adminMessage").textContent =
+      "Loading platform information...";
+
+    const [profiles, scans, clicks] = await Promise.all([
+      db.from("profiles").select("*", { count: "exact", head: true }),
+      db.from("analytics_events")
+        .select("*", { count: "exact", head: true })
+        .eq("event_type", "scan"),
+      db.from("analytics_events")
+        .select("*", { count: "exact", head: true })
+        .eq("event_type", "link_click")
+    ]);
+
+    if (profiles.error || scans.error || clicks.error) {
+      throw new Error(
+        profiles.error?.message ||
+        scans.error?.message ||
+        clicks.error?.message
+      );
+    }
+
+    document.getElementById("clientCount").textContent =
+      profiles.count ?? 0;
+
+    document.getElementById("scanCount").textContent =
+      scans.count ?? 0;
+
+    document.getElementById("clickCount").textContent =
+      clicks.count ?? 0;
+
+    const { data: clients, error } = await db
+      .from("profiles")
+      .select("id,business_name,slug,is_active,created_at")
+      .order("created_at", { ascending: false });
+
+    if (error) throw error;
+
+    const list = document.getElementById("clientList");
+    list.replaceChildren();
+
+    if (!clients || clients.length === 0) {
+      list.textContent = "No client profiles have been created yet.";
+    } else {
+      clients.forEach(client => {
+        const item = document.createElement("div");
+        item.className = "client";
+
+        const name = document.createElement("strong");
+        name.textContent = client.business_name;
+
+        const details = document.createElement("p");
+        details.className = "muted";
+        details.textContent =
+          "Slug: " + client.slug +
+          " | Status: " +
+          (client.is_active ? "Active" : "Inactive");
+
+        item.append(name, details);
+        list.appendChild(item);
+      });
+    }
+
+    document.getElementById("adminMessage").textContent =
+      "Administrator access verified.";
+  }
+
+  document.getElementById("loginForm")
+    .addEventListener("submit", async function(event) {
+      event.preventDefault();
+      loginMessage.textContent = "Signing in...";
+
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+
+      const { error } = await db.auth.signInWithPassword({
+        email,
+        password
+      });
+
+      if (error) {
+        loginMessage.textContent = error.message;
+        return;
+      }
+
+      try {
+        await openDashboard();
+      } catch (err) {
+        loginMessage.textContent = err.message;
+      }
+    });
+
+  document.getElementById("logoutButton")
+    .addEventListener("click", async function() {
+      await db.auth.signOut();
+      dashboard.style.display = "none";
+      login.style.display = "block";
+      loginMessage.textContent = "You have signed out.";
+    });
+
+  async function restoreSession() {
+    const { data, error } = await db.auth.getSession();
+
+    if (error) {
+      loginMessage.textContent = error.message;
+      return;
+    }
+
+    if (data.session) {
+      try {
+        await openDashboard();
+      } catch (err) {
+        loginMessage.textContent = err.message;
+      }
+    }
+  }
+
+  restoreSession();
+</script>
+</body>
+</html>
