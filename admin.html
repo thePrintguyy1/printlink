@@ -17,10 +17,7 @@
       color: #172554;
     }
 
-    .container {
-      max-width: 1000px;
-      margin: auto;
-    }
+    .container { max-width: 1000px; margin: auto; }
 
     .panel {
       background: white;
@@ -31,15 +28,25 @@
     }
 
     h1 { margin-top: 0; }
-    h2 { font-size: 18px; }
+    h2 { font-size: 19px; }
 
-    input {
+    input, textarea {
       width: 100%;
       padding: 13px;
       margin: 9px 0;
       border: 1px solid #cbd5e1;
       border-radius: 8px;
       font-size: 15px;
+      font-family: Arial, sans-serif;
+    }
+
+    textarea { min-height: 95px; resize: vertical; }
+
+    label {
+      display: block;
+      margin-top: 12px;
+      font-size: 14px;
+      font-weight: bold;
     }
 
     button {
@@ -53,11 +60,9 @@
     }
 
     button:hover { background: #24549a; }
+    button:disabled { opacity: .6; cursor: not-allowed; }
 
-    .logout {
-      background: #64748b;
-      float: right;
-    }
+    .logout { background: #64748b; float: right; }
 
     .stats {
       display: grid;
@@ -78,12 +83,20 @@
     }
 
     .muted { color: #64748b; }
-    .message { margin-top: 15px; color: #b91c1c; }
+    .message { margin-top: 15px; }
+    .error { color: #b91c1c; }
+    .success { color: #15803d; }
     #dashboard { display: none; }
 
     .client {
       padding: 14px 0;
       border-bottom: 1px solid #e2e8f0;
+    }
+
+    .help {
+      font-size: 13px;
+      color: #64748b;
+      margin-top: 2px;
     }
 
     @media(max-width: 550px) {
@@ -101,24 +114,16 @@
     <p class="muted">The Print Guy — Administrator Login</p>
 
     <form id="loginForm">
-      <input
-        id="email"
-        type="email"
-        placeholder="Administrator email"
-        required
-      >
+      <input id="email" type="email"
+        placeholder="Administrator email" required>
 
-      <input
-        id="password"
-        type="password"
-        placeholder="Password"
-        required
-      >
+      <input id="password" type="password"
+        placeholder="Password" required>
 
       <button type="submit">Sign In</button>
     </form>
 
-    <p id="loginMessage" class="message"></p>
+    <p id="loginMessage" class="message error"></p>
   </section>
 
   <section id="dashboard">
@@ -126,7 +131,9 @@
     <div class="panel">
       <button class="logout" id="logoutButton">Sign Out</button>
       <h1>PrintLink Dashboard</h1>
-      <p class="muted">Welcome to The Print Guy's administration panel.</p>
+      <p class="muted">
+        Welcome to The Print Guy's administration panel.
+      </p>
       <p id="adminMessage" class="muted"></p>
     </div>
 
@@ -149,6 +156,62 @@
           <strong id="clickCount">0</strong>
         </div>
       </div>
+    </div>
+
+    <div class="panel">
+      <h2>Add New Client</h2>
+      <p class="muted">
+        Create a personalised PrintLink profile for a business.
+      </p>
+
+      <form id="clientForm">
+
+        <label for="businessName">Business Name *</label>
+        <input id="businessName" type="text"
+          placeholder="e.g. Lagos Bites" required>
+
+        <label for="slug">Unique Profile Slug *</label>
+        <input id="slug" type="text"
+          placeholder="e.g. lagos-bites" required>
+
+        <p class="help">
+          This becomes the unique address of the client's PrintLink page.
+        </p>
+
+        <label for="description">Business Description</label>
+        <textarea id="description"
+          placeholder="Briefly describe the business"></textarea>
+
+        <label for="whatsapp">WhatsApp Number</label>
+        <input id="whatsapp" type="text"
+          placeholder="e.g. 2348031234567">
+
+        <label for="instagram">Instagram Link or Username</label>
+        <input id="instagram" type="text"
+          placeholder="e.g. https://instagram.com/business">
+
+        <label for="facebook">Facebook Link</label>
+        <input id="facebook" type="text"
+          placeholder="e.g. https://facebook.com/business">
+
+        <label for="tiktok">TikTok Link or Username</label>
+        <input id="tiktok" type="text"
+          placeholder="e.g. https://tiktok.com/@business">
+
+        <label for="phone">Business Phone Number</label>
+        <input id="phone" type="text"
+          placeholder="Business contact number">
+
+        <label for="businessEmail">Business Email</label>
+        <input id="businessEmail" type="email"
+          placeholder="business@example.com">
+
+        <button type="submit" id="saveClientButton">
+          Save New Client
+        </button>
+
+        <p id="clientMessage" class="message"></p>
+      </form>
     </div>
 
     <div class="panel">
@@ -176,8 +239,43 @@
   const login = document.getElementById("login");
   const dashboard = document.getElementById("dashboard");
   const loginMessage = document.getElementById("loginMessage");
+  const clientMessage = document.getElementById("clientMessage");
+
+  let currentUser = null;
+
+  function makeSlug(value) {
+    return value
+      .toLowerCase()
+      .trim()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-+|-+$/g, "");
+  }
+
+  document.getElementById("businessName")
+    .addEventListener("input", function() {
+      const slugField = document.getElementById("slug");
+
+      if (!slugField.dataset.edited) {
+        slugField.value = makeSlug(this.value);
+      }
+    });
+
+  document.getElementById("slug")
+    .addEventListener("input", function() {
+      this.dataset.edited = "true";
+      this.value = makeSlug(this.value);
+    });
 
   async function openDashboard() {
+    const { data: userData, error: userError } =
+      await db.auth.getUser();
+
+    if (userError || !userData.user) {
+      throw new Error("Please sign in again.");
+    }
+
+    currentUser = userData.user;
+
     const { data: admin, error: adminError } =
       await db.rpc("is_printlink_admin");
 
@@ -261,6 +359,90 @@
       "Administrator access verified.";
   }
 
+  document.getElementById("clientForm")
+    .addEventListener("submit", async function(event) {
+      event.preventDefault();
+
+      const button = document.getElementById("saveClientButton");
+      button.disabled = true;
+      button.textContent = "Saving Client...";
+
+      clientMessage.className = "message";
+      clientMessage.textContent = "Checking client information...";
+
+      try {
+        const businessName =
+          document.getElementById("businessName").value.trim();
+
+        const slug =
+          makeSlug(document.getElementById("slug").value);
+
+        if (!businessName || !slug) {
+          throw new Error("Business name and slug are required.");
+        }
+
+        const { data: existing, error: checkError } = await db
+          .from("profiles")
+          .select("id")
+          .eq("slug", slug)
+          .maybeSingle();
+
+        if (checkError) throw checkError;
+
+        if (existing) {
+          throw new Error(
+            "This profile slug is already in use. Choose another one."
+          );
+        }
+
+        const clientData = {
+          created_by: currentUser.id,
+          business_name: businessName,
+          slug: slug,
+          description:
+            document.getElementById("description").value.trim() || null,
+          whatsapp:
+            document.getElementById("whatsapp").value.trim() || null,
+          instagram:
+            document.getElementById("instagram").value.trim() || null,
+          facebook:
+            document.getElementById("facebook").value.trim() || null,
+          tiktok:
+            document.getElementById("tiktok").value.trim() || null,
+          phone:
+            document.getElementById("phone").value.trim() || null,
+          email:
+            document.getElementById("businessEmail").value.trim() || null,
+          is_active: true
+        };
+
+        const { error: insertError } = await db
+          .from("profiles")
+          .insert(clientData);
+
+        if (insertError) throw insertError;
+
+        clientMessage.className = "message success";
+        clientMessage.textContent =
+          "Client successfully registered!";
+
+        document.getElementById("clientForm").reset();
+
+        const slugField = document.getElementById("slug");
+        delete slugField.dataset.edited;
+
+        await loadDashboard();
+
+      } catch (error) {
+        clientMessage.className = "message error";
+        clientMessage.textContent =
+          error.message || "Something went wrong.";
+      } finally {
+        button.disabled = false;
+        button.textContent = "Save New Client";
+      }
+    });
+
   document.getElementById("loginForm")
     .addEventListener("submit", async function(event) {
       event.preventDefault();
@@ -288,7 +470,14 @@
 
   document.getElementById("logoutButton")
     .addEventListener("click", async function() {
-      await db.auth.signOut();
+      const { error } = await db.auth.signOut();
+
+      if (error) {
+        alert(error.message);
+        return;
+      }
+
+      currentUser = null;
       dashboard.style.display = "none";
       login.style.display = "block";
       loginMessage.textContent = "You have signed out.";
