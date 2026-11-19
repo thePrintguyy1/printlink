@@ -1,0 +1,87 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PrintLink - Connection Test</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f1f5f9;
+      display: grid;
+      place-items: center;
+      min-height: 100vh;
+      margin: 0;
+    }
+
+    .panel {
+      background: white;
+      padding: 35px;
+      border-radius: 16px;
+      max-width: 420px;
+      width: 85%;
+      box-shadow: 0 10px 35px rgba(0,0,0,.08);
+      text-align: center;
+    }
+
+    h2 { color: #172554; }
+    #status { line-height: 1.6; }
+  </style>
+</head>
+<body>
+
+  <div class="panel">
+    <h2>PrintLink Connection Test</h2>
+    <p id="status">Connecting to Supabase...</p>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <script>
+    const SUPABASE_URL =
+      "https://zrdgschtvluhxzvjtypa.supabase.co";
+
+    const SUPABASE_PUBLISHABLE_KEY =
+      "sb_publishable_N7xwZEblpWxhUeDBsaL-Xw_mU8Xt7KN";
+
+    const client = window.supabase.createClient(
+      SUPABASE_URL,
+      SUPABASE_PUBLISHABLE_KEY
+    );
+
+    async function testConnection() {
+      const status = document.getElementById("status");
+
+      try {
+        const { data, error } = await client
+          .from("profiles")
+          .select("id")
+          .limit(1);
+
+        if (error) throw error;
+
+        status.innerHTML =
+          "SUCCESS!<br><br>" +
+          "PrintLink is connected to Supabase.<br>" +
+          "Your database connection is working.";
+
+        status.style.color = "green";
+
+        console.log("PrintLink connection successful", data);
+
+      } catch (error) {
+        status.innerHTML =
+          "CONNECTION ERROR<br><br>" + error.message;
+
+        status.style.color = "red";
+
+        console.error("PrintLink connection error:", error);
+      }
+    }
+
+    testConnection();
+  </script>
+
+</body>
+</html>
