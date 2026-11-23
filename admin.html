@@ -455,6 +455,7 @@
         clientMessage.className = "message success";
         clientMessage.textContent =
           "Client successfully registered!";
+
 async function uploadClientLogo(clientId, file) {
   const allowedTypes = [
     "image/png",
@@ -472,8 +473,7 @@ async function uploadClientLogo(clientId, file) {
   }
 
   const extension = file.name.split(".").pop().toLowerCase();
-  const filePath =
-    clientId + "/" + Date.now() + "." + extension;
+  const filePath = clientId + "/" + Date.now() + "." + extension;
 
   const { error: uploadError } = await db.storage
     .from("client-logos")
@@ -495,22 +495,6 @@ async function uploadClientLogo(clientId, file) {
 
   if (updateError) throw updateError;
 }
-        document.getElementById("clientForm").reset();
-
-        const slugField = document.getElementById("slug");
-        delete slugField.dataset.edited;
-
-        await loadDashboard();
-
-      } catch (error) {
-        clientMessage.className = "message error";
-        clientMessage.textContent =
-          error.message || "Something went wrong.";
-      } finally {
-        button.disabled = false;
-        button.textContent = "Save New Client";
-      }
-    });
 
   document.getElementById("loginForm")
     .addEventListener("submit", async function(event) {
