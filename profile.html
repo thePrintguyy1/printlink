@@ -1,0 +1,278 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Business Profile | PrintLink</title>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #eaf4ff, #d6ebff, #c8e3ff);
+      min-height: 100vh;
+      padding: 35px 15px;
+      color: #172b45;
+    }
+
+    .profile-card {
+      width: 100%;
+      max-width: 440px;
+      margin: 0 auto;
+      padding: 32px 24px;
+      background: rgba(255,255,255,0.94);
+      border-radius: 25px;
+      box-shadow: 0 12px 35px rgba(0,0,0,0.09);
+      text-align: center;
+    }
+
+    .logo {
+      width: 125px;
+      height: 125px;
+      object-fit: contain;
+      border-radius: 15px;
+      margin-bottom: 18px;
+    }
+
+    h1 {
+      font-size: 25px;
+      margin-bottom: 10px;
+    }
+
+    .description {
+      color: #64748b;
+      line-height: 1.6;
+      margin-bottom: 25px;
+      overflow-wrap: anywhere;
+    }
+
+    .links {
+      display: grid;
+      gap: 12px;
+    }
+
+    .links a {
+      display: block;
+      padding: 15px;
+      border-radius: 12px;
+      background: #edf5ff;
+      color: #173b65;
+      text-decoration: none;
+      font-weight: 600;
+      transition: 0.2s;
+      overflow-wrap: anywhere;
+    }
+
+    .links a:hover {
+      background: #d8eaff;
+      transform: translateY(-2px);
+    }
+
+    .footer {
+      margin-top: 28px;
+      font-size: 12px;
+      color: #8995a5;
+    }
+
+    .message {
+      color: #64748b;
+      line-height: 1.6;
+      padding: 25px 5px;
+    }
+
+    .hidden {
+      display: none;
+    }
+  </style>
+</head>
+
+<body>
+
+  <main class="profile-card">
+
+    <div id="loadingMessage" class="message">
+      Loading business profile...
+    </div>
+
+    <div id="profileContent" class="hidden">
+
+      <img id="businessLogo" class="logo hidden" alt="Business logo">
+
+      <h1 id="businessName"></h1>
+
+      <p id="businessDescription" class="description"></p>
+
+      <div id="businessLinks" class="links"></div>
+
+    </div>
+
+    <div id="errorMessage" class="message hidden"></div>
+
+    <div class="footer">
+      Powered by The Print Guy
+    </div>
+
+  </main>
+
+  <script>
+    const SUPABASE_URL =
+      "https://zrdgschtvluhxzvjtypa.supabase.co";
+
+    const SUPABASE_KEY =
+      "sb_publishable_N7xwZEblpWxhUeDBsaL-Xw_mU8Xt7KN";
+
+    const db = window.supabase.createClient(
+      SUPABASE_URL,
+      SUPABASE_KEY
+    );
+
+    function showError(message) {
+      document.getElementById("loadingMessage")
+        .classList.add("hidden");
+
+      document.getElementById("errorMessage")
+        .textContent = message;
+
+      document.getElementById("errorMessage")
+        .classList.remove("hidden");
+    }
+
+    function addLink(container, label, url) {
+      if (!url) return;
+
+      const link = document.createElement("a");
+      link.textContent = label;
+      link.href = url;
+      link.target = "_blank";
+      link.rel = "noopener noreferrer";
+
+      container.appendChild(link);
+    }
+
+    function normaliseUrl(value, prefix) {
+      if (!value) return null;
+
+      let cleaned = value.trim();
+
+      if (!cleaned) return null;
+
+      if (/^https?:\/\//i.test(cleaned)) {
+        return cleaned;
+      }
+
+      if (cleaned.startsWith("@")) {
+        cleaned = cleaned.substring(1);
+      }
+
+      return prefix + cleaned;
+    }
+
+    async function loadProfile() {
+      try {
+        const params = new URLSearchParams(window.location.search);
+        const slug = params.get("p");
+
+        if (!slug) {
+          showError("No business profile was specified.");
+          return;
+        }
+
+        const { data: profile, error } = await db
+          .from("profiles")
+          .select("*")
+          .eq("slug", slug)
+          .eq("is_active", true)
+          .maybeSingle();
+
+        if (error) throw error;
+
+        if (!profile) {
+          showError("This business profile is unavailable.");
+          return;
+        }
+
+        document.title = profile.business_name + " | PrintLink";
+
+        const logo = document.getElementById("businessLogo");
+
+        if (profile.logo_url) {
+          logo.src = profile.logo_url;
+          logo.classList.remove("hidden");
+        }
+
+        document.getElementById("businessName").textContent =
+          profile.business_name || "";
+
+        document.getElementById("businessDescription").textContent =
+          profile.description || "";
+
+        const links = document.getElementById("businessLinks");
+
+        addLink(
+          links,
+          "WhatsApp",
+          profile.whatsapp
+            ? normaliseUrl(
+                profile.whatsapp.replace(/[^\d]/g, ""),
+                "https://wa.me/"
+              )
+            : null
+        );
+
+        addLink(
+          links,
+          "Instagram",
+          normaliseUrl(profile.instagram, "https://instagram.com/")
+        );
+
+        addLink(
+          links,
+          "Facebook",
+          normaliseUrl(profile.facebook, "https://facebook.com/")
+        );
+
+        addLink(
+          links,
+          "TikTok",
+          normaliseUrl(profile.tiktok, "https://tiktok.com/@")
+        );
+
+        addLink(
+          links,
+          "Call Now",
+          profile.phone
+            ? "tel:" + profile.phone.replace(/[^\d+]/g, "")
+            : null
+        );
+
+        addLink(
+          links,
+          "Send Email",
+          profile.email ? "mailto:" + profile.email : null
+        );
+
+        document.getElementById("loadingMessage")
+          .classList.add("hidden");
+
+        document.getElementById("profileContent")
+          .classList.remove("hidden");
+
+      } catch (error) {
+        console.error("PrintLink profile error:", error);
+        showError("Unable to load this business profile. Please try again.");
+      }
+    }
+
+    loadProfile();
+  </script>
+
+</body>
+</html>
