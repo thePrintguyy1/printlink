@@ -455,7 +455,22 @@
         clientMessage.className = "message success";
         clientMessage.textContent =
           "Client successfully registered!";
+        document.getElementById("clientForm").reset();
 
+        const slugField = document.getElementById("slug");
+        delete slugField.dataset.edited;
+
+        await loadDashboard();
+
+      } catch (error) {
+        clientMessage.className = "message error";
+        clientMessage.textContent =
+          error.message || "Something went wrong.";
+      } finally {
+        button.disabled = false;
+        button.textContent = "Save New Client";
+      }
+    });
 async function uploadClientLogo(clientId, file) {
   const allowedTypes = [
     "image/png",
