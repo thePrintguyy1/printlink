@@ -223,6 +223,7 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 
 <script>
   const SUPABASE_URL =
@@ -350,6 +351,73 @@
     " | Status: " +
     (client.is_active ? "Active" : "Inactive");
 
+  const qrSection = document.createElement("div");
+  qrSection.style.marginTop = "18px";
+
+  const qrTitle = document.createElement("p");
+  qrTitle.textContent = "Business QR Code";
+  qrTitle.style.fontWeight = "bold";
+  qrTitle.style.marginBottom = "10px";
+
+  const qrBox = document.createElement("div");
+  qrBox.style.background = "#ffffff";
+  qrBox.style.padding = "12px";
+  qrBox.style.display = "inline-block";
+  qrBox.style.borderRadius = "10px";
+  qrBox.style.marginBottom = "10px";
+
+  const qrCanvas = document.createElement("div");
+
+  const profileUrl =
+    "https://theprintguyy1.github.io/printlink/profile.html?p=" +
+    encodeURIComponent(client.slug);
+
+  new QRCode(qrCanvas, {
+    text: profileUrl,
+    width: 180,
+    height: 180,
+    colorDark: "#000000",
+    colorLight: "#ffffff",
+    correctLevel: QRCode.CorrectLevel.H
+  });
+
+  qrBox.appendChild(qrCanvas);
+
+  const downloadButton = document.createElement("button");
+  downloadButton.textContent = "Download QR Code (PNG)";
+  downloadButton.type = "button";
+  downloadButton.style.display = "block";
+  downloadButton.style.marginTop = "10px";
+
+  downloadButton.addEventListener("click", function() {
+    const qrImage = qrCanvas.querySelector("img");
+    const qrImageCanvas = qrCanvas.querySelector("canvas");
+
+    let imageUrl = "";
+
+    if (qrImage && qrImage.src) {
+      imageUrl = qrImage.src;
+    } else if (qrImageCanvas) {
+      imageUrl = qrImageCanvas.toDataURL("image/png");
+    }
+
+    if (!imageUrl) {
+      alert("QR code is not ready yet. Please try again.");
+      return;
+    }
+
+    const downloadLink = document.createElement("a");
+    downloadLink.href = imageUrl;
+    downloadLink.download = client.slug + "-printlink-qr.png";
+    downloadLink.click();
+  });
+
+  qrSection.append(
+    qrTitle,
+    qrBox,
+    downloadButton
+  );
+
   const uploadLabel = document.createElement("label");
   uploadLabel.textContent = "Upload Business Logo";
 
@@ -380,7 +448,14 @@
     }
   });
 
-  item.append(name, details, uploadLabel, uploadInput, uploadMessage);
+  item.append(
+  name,
+  details,
+  qrSection,
+  uploadLabel,
+  uploadInput,
+  uploadMessage
+);
   list.appendChild(item);
 });
     }
