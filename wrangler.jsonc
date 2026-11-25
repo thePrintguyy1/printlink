@@ -1,0 +1,9 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "printlink",
+  "compatibility_date": "2026-11-25",
+  "assets": {
+    "directory": ".",
+    "not_found_handling": "none"
+  }
+}
