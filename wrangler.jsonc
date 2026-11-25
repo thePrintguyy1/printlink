@@ -1,9 +1,12 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "printlink",
+  "main": "./_worker.js",
   "compatibility_date": "2026-11-25",
   "assets": {
     "directory": ".",
+    "binding": "ASSETS",
+    "run_worker_first": ["/b/*"],
     "not_found_handling": "none"
   }
 }
