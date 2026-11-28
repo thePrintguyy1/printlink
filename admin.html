@@ -325,9 +325,9 @@
       clicks.count ?? 0;
 
     const { data: clients, error } = await db
-      .from("profiles")
-      .select("id,business_name,slug,is_active,created_at,logo_url")
-      .order("created_at", { ascending: false });
+  .from("profiles")
+  .select("*")
+  .order("created_at", { ascending: false });
 
     if (error) throw error;
 
