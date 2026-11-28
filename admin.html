@@ -343,7 +343,50 @@
 
   const name = document.createElement("strong");
   name.textContent = client.business_name;
+        
+const editButton = document.createElement("button");
+editButton.textContent = "Edit Profile";
+editButton.type = "button";
+editButton.style.marginTop = "10px";
 
+editButton.addEventListener("click", function() {
+  document.getElementById("businessName").value =
+    client.business_name || "";
+
+  document.getElementById("slug").value =
+    client.slug || "";
+
+  document.getElementById("description").value =
+    client.description || "";
+
+  document.getElementById("whatsapp").value =
+    client.whatsapp || "";
+
+  document.getElementById("instagram").value =
+    client.instagram || "";
+
+  document.getElementById("facebook").value =
+    client.facebook || "";
+
+  document.getElementById("tiktok").value =
+    client.tiktok || "";
+
+  document.getElementById("phone").value =
+    client.phone || "";
+
+  document.getElementById("businessEmail").value =
+    client.email || "";
+
+  document.getElementById("saveClientButton").textContent =
+    "Update Client";
+
+  document.getElementById("clientMessage").textContent =
+    "Editing " + client.business_name;
+
+  document.getElementById("clientForm").scrollIntoView({
+    behavior: "smooth"
+  });
+});
   const details = document.createElement("p");
   details.className = "muted";
   details.textContent =
@@ -451,6 +494,7 @@
   item.append(
   name,
   details,
+  editButton,
   qrSection,
   uploadLabel,
   uploadInput,
